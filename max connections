@@ -1,0 +1,11 @@
+ mongodb最大的连接数是819，在启动里面加参数 --maxConns=50000重启mongodb服务后最大连接数还是819。最后通过排查发现是linux系统的限制，Linux系统默认一个进程最大文件打开数目为1024。需要修改此限制
+因为已经将mongodb添加到开机启动里面，所以需要在rc.local文件下面加ulimit -n 的限制。
+
+只需要在root权限下执行：
+ulimit -n 50000 
+
+再启动mongodb的时候加上这样的参数：
+mongod -bind_ip 10.0.60.44 -port 27017 --dbpath /home/hadoop/mongodbData --logpath /home/hadoop/mongodbData/logs/mongodb.log  --maxConns=50000
+
+在连接mongodb以后：
+db.serverStatus().connections
